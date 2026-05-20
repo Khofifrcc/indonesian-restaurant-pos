@@ -90,4 +90,11 @@ public function deleteStaff($personelID)
         [$personelID]
     );
 }
+public function getSaleReceipt($id)
+{
+    return DB::select(
+        'CALL sp_fis_select(?)',
+        [$id]
+    );
+}
 }

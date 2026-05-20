@@ -79,4 +79,8 @@ public function deleteStaff($personelID)
 {
     return $this->dal->deleteStaff($personelID);
 }
+public function getSaleReceipt($id)
+{
+    return $this->dal->getSaleReceipt($id);
+}
 }

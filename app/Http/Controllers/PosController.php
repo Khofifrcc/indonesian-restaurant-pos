@@ -51,30 +51,30 @@ class PosController extends Controller
     }
 
     public function createOrder(Request $request)
-    {
-        $cart = session()->get('cart', []);
+{
+    $cart = session()->get('cart', []);
 
-        if (count($cart) == 0) {
-            return redirect()
-                ->route('pos.index')
-                ->with('error', 'Sepet boş!');
-        }
-
-        $saleID = $this->business->createOrder(
-            $cart,
-            $request->payment_method ?? 'Nakit',
-            $request->sale_type ?? 'Salon',
-            $request->table_no ?? 1,
-            $request->discount ?? 0,
-            2
-        );
-
-        session()->forget('cart');
-
+    if (count($cart) == 0) {
         return redirect()
             ->route('pos.index')
-            ->with('success', 'Satış oluşturuldu. Satış ID: ' . $saleID);
+            ->with('error', 'Sepet boş!');
     }
+
+    $saleID = $this->business->createOrder(
+        $cart,
+        $request->payment_method ?? 'Nakit',
+        $request->sale_type ?? 'Salon',
+        $request->table_no ?? 1,
+        $request->discount ?? 0,
+        2
+    );
+
+    session()->forget('cart');
+
+    session()->flash('receipt_id', $saleID);
+
+    return redirect()->route('pos.index');
+}
 
     public function pay(Request $request)
     {
@@ -162,37 +162,13 @@ class PosController extends Controller
     
         return redirect()->route('pos.index');
     }
-    public function manageProducts()
-{
-    $products = $this->business->getProducts();
-    $categories = $this->business->getCategories();
-
-    return view('pos.manage-products', compact('products', 'categories'));
-}
-
-public function addProduct(Request $request)
-{
-    $this->business->addProduct(
-        $request->urun_adi,
-        $request->birim_fiyat,
-        $request->kategori_id
-    );
-
-    return redirect()
-        ->route('pos.manageProducts')
-        ->with('success', 'Ürün eklendi!');
-}
-
-public function deleteProduct($id)
-{
-    $this->business->deleteProduct($id);
-
-    return redirect()
-        ->route('pos.manageProducts')
-        ->with('success', 'Ürün silindi!');
-}
-
-public function manageStaff()
+    public function receipt($id)
+    {
+        $receipt = $this->business->getSaleReceipt($id);
+    
+        return view('pos.receipt', compact('receipt'));
+    }
+    public function manageStaff()
 {
     $staff = $this->business->getStaff();
 
@@ -221,4 +197,34 @@ public function deleteStaff($id)
         ->route('pos.manageStaff')
         ->with('success', 'Personel silindi!');
 }
+public function manageProducts()
+{
+    $products = $this->business->getProducts();
+    $categories = $this->business->getCategories();
+
+    return view('pos.manage-products', compact('products', 'categories'));
+}
+
+public function addProduct(Request $request)
+{
+    $this->business->addProduct(
+        $request->urun_adi,
+        $request->birim_fiyat,
+        $request->kategori_id
+    );
+
+    return redirect()
+        ->route('pos.manageProducts')
+        ->with('success', 'Ürün eklendi!');
+}
+
+public function deleteProduct($id)
+{
+    $this->business->deleteProduct($id);
+
+    return redirect()
+        ->route('pos.manageProducts')
+        ->with('success', 'Ürün silindi!');
+}
+    
 }

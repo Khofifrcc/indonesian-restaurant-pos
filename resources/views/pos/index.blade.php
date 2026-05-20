@@ -5,6 +5,23 @@
 <title>Warung POS</title>
 
 <style>
+    .receipt-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+
+.receipt-box{
+    width:460px;
+    max-height:90vh;
+    background:white;
+    padding:20px;
+    border-radius:24px;
+}
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
 body{background:#f8f5f2;color:#2b1b16}
 .app{display:grid;grid-template-columns:240px 1fr 380px;min-height:100vh}
@@ -227,6 +244,31 @@ document.getElementById('searchInput').addEventListener('input', function(){
     });
 });
 </script>
+@if(session('receipt_id'))
+<div id="receiptModal" class="receipt-modal">
+    <div class="receipt-box">
+        <iframe
+            src="{{ route('pos.receipt', session('receipt_id')) }}"
+            width="100%"
+            height="620"
+            style="border:0;border-radius:12px;">
+        </iframe>
 
+        <div style="display:flex;gap:10px;margin-top:15px;">
+            <button
+                onclick="window.open('{{ route('pos.receipt', session('receipt_id')) }}','_blank')"
+                class="btn pay">
+                Print
+            </button>
+
+            <button
+                onclick="document.getElementById('receiptModal').style.display='none'"
+                class="btn clear">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+@endif
 </body>
 </html>
