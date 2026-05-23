@@ -16,7 +16,7 @@ body{background:#f8f5f2;color:#2b1b16}
 .nav{display:flex;flex-direction:column;gap:10px;margin-top:30px}
 .nav a{text-decoration:none;color:#2d1f1f;padding:14px 16px;border-radius:16px;font-weight:700;display:flex;align-items:center;gap:10px}
 .nav a:hover{background:#f3e9df}
-.nav a.active{background:#9f1239!important;color:white!important;box-shadow:0 8px 18px rgba(159,18,57,.25)}
+.nav a.active{background:#9f1239!important;color:white!important}
 .nav a i{font-size:20px}
 
 .logout{position:absolute;bottom:30px;left:20px;right:20px}
@@ -24,7 +24,7 @@ body{background:#f8f5f2;color:#2b1b16}
 .clear:hover{background:#9f1239;color:white}
 
 .main{padding:30px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:25px 0}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin:25px 0}
 .stat{background:white;border:1px solid #eadbd6;border-radius:20px;padding:22px}
 .stat h3{color:#6b5148;margin-bottom:10px}
 .stat strong{font-size:32px;color:#9f1239}
@@ -32,31 +32,14 @@ body{background:#f8f5f2;color:#2b1b16}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
 .table-card{background:white;border:1px solid #eadbd6;border-radius:22px;padding:28px;text-align:center;text-decoration:none;color:#2b1b16;transition:.2s}
 .table-card:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(0,0,0,.08)}
-.table-card i{font-size:44px;margin-bottom:12px}
+.table-card i{font-size:44px;margin-bottom:12px;color:#9f1239}
 .table-card h2{margin-bottom:10px}
 .status{display:inline-block;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:bold}
 .available{background:#dcfce7;color:#15803d}
-.occupied{background:#fee2e2;color:#991b1b}
 </style>
 </head>
 
 <body>
-
-@php
-    $occupiedTables = [];
-
-    foreach($sales as $sale){
-        if($sale->SatisTipi == 'Salon' && $sale->Durum == 'Aktif' && $sale->MasaNo){
-            $occupiedTables[] = $sale->MasaNo;
-        }
-    }
-
-    $occupiedTables = array_unique($occupiedTables);
-
-    $totalTables = 12;
-    $occupiedCount = count($occupiedTables);
-    $availableCount = $totalTables - $occupiedCount;
-@endphp
 
 <div class="app">
 
@@ -69,12 +52,14 @@ body{background:#f8f5f2;color:#2b1b16}
 
     <div class="nav">
         <a href="{{ route('pos.index') }}">
-            <i class="bx bx-cart"></i> POS Order
-        </a>
-
         <a class="active" href="{{ route('pos.tables') }}">
             <i class="bx bx-table"></i> Tables
         </a>
+        <a>
+            <i class="bx bx-cart"></i> POS Order
+        </a>
+
+       
 
         <a href="{{ route('pos.manageProducts') }}">
             <i class="bx bx-food-menu"></i> Products
@@ -99,48 +84,29 @@ body{background:#f8f5f2;color:#2b1b16}
 
 <main class="main">
 
-    <h1>Table Management</h1>
+    <h1>Table Selection</h1>
     <p style="color:#666;margin-top:6px;">Select a table for dine-in order</p>
 
     <div class="stats">
         <div class="stat">
             <h3>Total Tables</h3>
-            <strong>{{ $totalTables }}</strong>
+            <strong>{{ count($tables) }}</strong>
         </div>
 
         <div class="stat">
-            <h3>Available</h3>
-            <strong style="color:#16a34a;">{{ $availableCount }}</strong>
-        </div>
-
-        <div class="stat">
-            <h3>Occupied</h3>
-            <strong style="color:#dc2626;">{{ $occupiedCount }}</strong>
+            <h3>Status</h3>
+            <strong style="color:#16a34a;">Available</strong>
         </div>
     </div>
 
     <div class="grid">
-
-        @for($i = 1; $i <= $totalTables; $i++)
-
-            @php
-                $isOccupied = in_array($i, $occupiedTables);
-            @endphp
-
-            <a class="table-card" href="{{ route('pos.selectTable', $i) }}">
-                <i class="bx bx-chair"></i>
-
-                <h2>Table {{ $i }}</h2>
-
-                @if($isOccupied)
-                    <span class="status occupied">Occupied</span>
-                @else
-                    <span class="status available">Available</span>
-                @endif
+        @foreach($tables as $table)
+            <a class="table-card" href="{{ route('pos.selectTable', $table) }}">
+                <i class="bx bx-table"></i>
+                <h2>Table {{ $table }}</h2>
+                <span class="status available">Available</span>
             </a>
-
-        @endfor
-
+        @endforeach
     </div>
 
 </main>

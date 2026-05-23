@@ -85,13 +85,13 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
     <div class="sub">Premium Restaurant System</div>
 
     <div class="nav">
-    
+    <a href="{{ route('pos.tables') }}">
+    <i class="bx bx-table"></i> Tables
+</a>
         <a class="active" href="{{ route('pos.index') }}">
             <i class="bx bx-cart"></i> POS Order
         </a>
-        <a href="{{ route('pos.tables') }}">
-    <i class="bx bx-table"></i> Tables
-</a>
+       
         <a href="{{ route('pos.manageProducts') }}">
             <i class="bx bx-food-menu"></i> Products
         </a>
@@ -232,48 +232,39 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
 </div>
 
 <form id="paymentForm" method="POST" action="{{ route('pos.createOrder') }}">
-        @csrf
+    @csrf
 
-        <div class="types">
-            <label class="type-btn active" onclick="selectType(this)">
-                <input type="radio" name="sale_type" value="Salon" checked>
-                Salon
-            </label>
+    <div class="types">
+        <label class="type-btn active" onclick="selectType(this)">
+            <input type="radio" name="sale_type" value="Salon" checked>
+            Salon
+        </label>
 
-            <label class="type-btn" onclick="selectType(this)">
-                <input type="radio" name="sale_type" value="Paket">
-                Paket
-            </label>
-        </div>
+        <label class="type-btn" onclick="selectType(this)">
+            <input type="radio" name="sale_type" value="Paket">
+            Paket
+        </label>
+    </div>
 
-        <label>Payment Method</label>
+    <label>Payment Method</label>
+    <select name="payment_method" required>
+        <option value="Nakit">Nakit</option>
+        <option value="Kart">Kart</option>
+    </select>
 
-<select name="payment_method" required>
-    <option value="Nakit">Nakit</option>
-    <option value="Kart">Kart</option>
-</select>
-        <label>Discount</label>
-        <label>Discount (%)</label>
+    <label>Discount (%)</label>
+    <input type="number" name="discount" id="discountInput" value="0" min="0" max="100">
 
-<input type="number"
-       name="discount"
-       id="discountInput"
-       value="0"
-       min="0"
-       max="100">
+    <div id="tableArea">
+        <label>Table Number</label>
+        <input type="number" name="table_no" id="tableInput" value="{{ session('selected_table', 1) }}">
+    </div>
 
-        <div id="tableArea">
-            <label>Table Number</label>
-            <input type="number"
-       name="table_no"
-       id="tableInput"
-       value="{{ session('selected_table', 1) }}">
-        </div>
-
-        <button class="btn pay" type="button" onclick="openPaymentModal()">
-    <i class="bx bx-credit-card"></i> Proceed to Payment
-</button>
-    </form>
+    <button class="btn pay" type="button" onclick="openPaymentModal()">
+        <i class="bx bx-credit-card"></i>
+        Proceed to Payment
+    </button>
+</form>
 
     <form method="POST" action="{{ route('pos.clear') }}">
         @csrf
@@ -383,6 +374,34 @@ document.getElementById('discountInput')?.addEventListener('input', function(){
             </button>
 
             <button class="btn clear" onclick="closePaymentModal()">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+function openPaymentModal(){
+    document.getElementById('paymentModal').style.display = 'flex';
+}
+
+function closePaymentModal(){
+    document.getElementById('paymentModal').style.display = 'none';
+}
+</script>
+<div id="paymentModal" class="receipt-modal" style="display:none;">
+    <div class="receipt-box">
+        <h2>Confirm Payment</h2>
+
+        <p style="margin:15px 0;color:#666;">
+            Are you sure you want to complete this order?
+        </p>
+
+        <div style="display:flex;gap:10px;">
+            <button type="button" class="btn pay" onclick="document.getElementById('paymentForm').submit()">
+                Confirm Payment
+            </button>
+
+            <button type="button" class="btn clear" onclick="closePaymentModal()">
                 Cancel
             </button>
         </div>

@@ -439,37 +439,24 @@ $bestProduct = count($bestSelling) > 0
         </div>
 
         <div class="card">
+    <h2>Recent Transactions</h2>
 
-            <h2>Recent Transactions</h2>
+    @foreach($recentTransactions as $trx)
+        <div class="item">
+            <div>
+                <strong>Order #{{ $trx->SatisID }}</strong><br>
+                <small>{{ $trx->SatisTarihiSaat }}</small><br>
+                <small>{{ $trx->SatisTipi }} @if($trx->MasaNo) - Table {{ $trx->MasaNo }} @endif</small><br>
+                <small>Cashier: {{ $trx->Ad }} {{ $trx->Soyad }}</small>
+            </div>
 
-            @foreach($bestSelling as $row)
-
-                <div class="item">
-
-                    <div>
-                        <strong>{{ $row->UrunAdi }}</strong><br>
-                        <small>{{ $row->ToplamAdet }} item sold</small>
-                    </div>
-
-                    <div style="text-align:right;">
-
-                        <span class="status green">
-                            Completed
-                        </span>
-
-                        <br><br>
-
-                        <div class="price">
-                            ₺ {{ number_format($row->ToplamGelir,2) }}
-                        </div>
-
-                    </div>
-
-                </div>
-
-            @endforeach
-
+            <div style="text-align:right;">
+                <span class="status green">{{ $trx->OdemeYontemi }}</span><br><br>
+                <div class="price">₺ {{ number_format($trx->ToplamTutar,2) }}</div>
+            </div>
         </div>
+    @endforeach
+</div>
 
     </div>
 

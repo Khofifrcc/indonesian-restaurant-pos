@@ -36,7 +36,10 @@ class PosBusiness
         return $this->dal->getSales();
     }
 
-
+    public function getRecentTransactions()
+    {
+        return $this->dal->getRecentTransactions();
+    }
     public function getDailyReport()
     {
         return $this->dal->getDailyReport();

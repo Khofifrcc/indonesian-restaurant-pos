@@ -46,7 +46,10 @@ class PosDAL
 {
     return DB::select('CALL sp_kategori_select()');
 }
-
+public function getRecentTransactions()
+{
+    return DB::select('CALL sp_recent_transactions()');
+}
 public function addProduct($urunAdi, $birimFiyat, $kategoriID)
 {
     return DB::statement(
