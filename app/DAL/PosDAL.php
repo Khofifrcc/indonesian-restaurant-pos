@@ -32,13 +32,6 @@ class PosDAL
         return DB::select('CALL sp_satis_select()');
     }
 
-    public function login($username, $password)
-    {
-        return DB::select(
-            'CALL sp_login(?, ?)',
-            [$username, $password]
-        );
-    }
 
     public function getDailyReport()
     {
@@ -89,6 +82,14 @@ public function deleteStaff($personelID)
         'CALL sp_personel_delete(?)',
         [$personelID]
     );
+}
+public function login($username, $password)
+{
+    return DB::table('PERSONEL')
+        ->where('KullaniciAdi', $username)
+        ->where('Sifre', $password)
+        ->where('AktifMi', 'E')
+        ->first();
 }
 public function getSaleReceipt($id)
 {

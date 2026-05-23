@@ -85,12 +85,13 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
     <div class="sub">Premium Restaurant System</div>
 
     <div class="nav">
-    <a href="{{ route('pos.tables') }}">
-    <i class="bx bx-table"></i> Tables
-</a>
+    
         <a class="active" href="{{ route('pos.index') }}">
             <i class="bx bx-cart"></i> POS Order
         </a>
+        <a href="{{ route('pos.tables') }}">
+    <i class="bx bx-table"></i> Tables
+</a>
         <a href="{{ route('pos.manageProducts') }}">
             <i class="bx bx-food-menu"></i> Products
         </a>
@@ -210,17 +211,27 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
     @endforeach
 
     @php
-        $tax = $subtotal * 0.10;
-        $total = $subtotal + $tax;
+    $total = $subtotal;
     @endphp
 
     <div class="total-box">
-        <div class="row"><span>Subtotal</span><strong>₺ {{ number_format($subtotal,2) }}</strong></div>
-        <div class="row"><span>Tax (10%)</span><strong>₺ {{ number_format($tax,2) }}</strong></div>
-        <div class="row total"><span>Total</span><span>₺ {{ number_format($total,2) }}</span></div>
+    <div class="row">
+        <span>Subtotal</span>
+        <strong>₺ {{ number_format($subtotal,2) }}</strong>
     </div>
 
-    <form method="POST" action="{{ route('pos.createOrder') }}">
+    <div class="row">
+        <span>Discount</span>
+        <strong id="discountPreview">₺ 0.00</strong>
+    </div>
+
+    <div class="row total">
+        <span>Total</span>
+        <span id="grandTotal">₺ {{ number_format($subtotal,2) }}</span>
+    </div>
+</div>
+
+<form id="paymentForm" method="POST" action="{{ route('pos.createOrder') }}">
         @csrf
 
         <div class="types">
@@ -235,8 +246,21 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
             </label>
         </div>
 
-        <input type="hidden" name="payment_method" value="Nakit">
-        <input type="hidden" name="discount" value="0">
+        <label>Payment Method</label>
+
+<select name="payment_method" required>
+    <option value="Nakit">Nakit</option>
+    <option value="Kart">Kart</option>
+</select>
+        <label>Discount</label>
+        <label>Discount (%)</label>
+
+<input type="number"
+       name="discount"
+       id="discountInput"
+       value="0"
+       min="0"
+       max="100">
 
         <div id="tableArea">
             <label>Table Number</label>
@@ -246,9 +270,9 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
        value="{{ session('selected_table', 1) }}">
         </div>
 
-        <button class="btn pay" type="submit">
-            <i class="bx bx-credit-card"></i> Proceed to Payment
-        </button>
+        <button class="btn pay" type="button" onclick="openPaymentModal()">
+    <i class="bx bx-credit-card"></i> Proceed to Payment
+</button>
     </form>
 
     <form method="POST" action="{{ route('pos.clear') }}">
@@ -321,6 +345,57 @@ function selectType(el){
     }
 }
 </script>
+<script>
+const subtotal = {{ $subtotal }};
 
+document.getElementById('discountInput')?.addEventListener('input', function(){
+
+    let discountPercent = parseFloat(this.value) || 0;
+
+    if(discountPercent > 100){
+        discountPercent = 100;
+    }
+
+    let discountAmount =
+        subtotal * (discountPercent / 100);
+
+    let total =
+        subtotal - discountAmount;
+
+    document.getElementById('discountPreview').innerText =
+        '- ₺ ' + discountAmount.toFixed(2);
+
+    document.getElementById('grandTotal').innerText =
+        '₺ ' + total.toFixed(2);
+
+});
+</script>
+<div id="paymentModal" class="receipt-modal" style="display:none;">
+    <div class="receipt-box">
+        <h2>Confirm Payment</h2>
+        <p style="margin:15px 0;color:#666;">
+            Are you sure you want to complete this order?
+        </p>
+
+        <div style="display:flex;gap:10px;">
+            <button class="btn pay" onclick="document.getElementById('paymentForm').submit()">
+                Confirm Payment
+            </button>
+
+            <button class="btn clear" onclick="closePaymentModal()">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+function openPaymentModal(){
+    document.getElementById('paymentModal').style.display = 'flex';
+}
+
+function closePaymentModal(){
+    document.getElementById('paymentModal').style.display = 'none';
+}
+</script>
 </body>
 </html>

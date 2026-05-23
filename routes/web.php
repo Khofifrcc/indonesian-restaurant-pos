@@ -27,3 +27,5 @@ Route::post('/staff/delete/{id}', [PosController::class, 'deleteStaff'])->name('
 Route::get('/receipt/{id}', [PosController::class, 'receipt'])->name('pos.receipt');
 Route::get('/tables', [PosController::class, 'tables'])->name('pos.tables');
 Route::get('/table/{number}', [PosController::class, 'selectTable'])->name('pos.selectTable');
+Route::post('/staff/toggle/{id}', [PosController::class, 'toggleStaff'])
+    ->name('pos.toggleStaff');

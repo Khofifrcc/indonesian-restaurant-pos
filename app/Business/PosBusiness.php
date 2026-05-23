@@ -36,10 +36,6 @@ class PosBusiness
         return $this->dal->getSales();
     }
 
-    public function login($username, $password)
-    {
-        return $this->dal->login($username, $password);
-    }
 
     public function getDailyReport()
     {
@@ -82,5 +78,13 @@ public function deleteStaff($personelID)
 public function getSaleReceipt($id)
 {
     return $this->dal->getSaleReceipt($id);
+}
+public function toggleStaff($id)
+{
+    return $this->dal->toggleStaff($id);
+}
+public function login($username, $password)
+{
+    return $this->dal->login($username, $password);
 }
 }

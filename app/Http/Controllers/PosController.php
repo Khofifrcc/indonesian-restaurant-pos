@@ -27,21 +27,38 @@ class PosController extends Controller
     }
 
     public function addItem(Request $request)
-    {
-        $cart = session()->get('cart', []);
+{
+    $cart = session()->get('cart', []);
 
+    $found = false;
+
+    foreach ($cart as $index => $item) {
+        if ($item['UrunID'] == $request->urun_id) {
+
+            $cart[$index]['Adet'] += 1;
+
+            $cart[$index]['SatirToplam'] =
+                $cart[$index]['Adet'] * $cart[$index]['BirimFiyat'];
+
+            $found = true;
+            break;
+        }
+    }
+
+    if (!$found) {
         $cart[] = [
             'UrunID' => $request->urun_id,
             'UrunAdi' => $request->urun_adi,
-            'Adet' => $request->adet,
+            'Adet' => 1,
             'BirimFiyat' => $request->birim_fiyat,
-            'SatirToplam' => $request->adet * $request->birim_fiyat
+            'SatirToplam' => $request->birim_fiyat
         ];
-
-        session()->put('cart', $cart);
-
-        return redirect()->route('pos.index');
     }
+
+    session()->put('cart', $cart);
+
+    return redirect()->route('pos.index');
+}
 
     public function clearOrder()
     {
@@ -66,7 +83,7 @@ class PosController extends Controller
         $request->sale_type ?? 'Salon',
         $request->table_no ?? 1,
         $request->discount ?? 0,
-        2
+        session('user')->PersonelID
     );
 
     session()->forget('cart');
@@ -104,22 +121,23 @@ public function selectTable($number)
 
     return redirect()->route('pos.index');
 }
-    public function login(Request $request)
-    {
-        $user = $this->business->login(
-            $request->username,
-            $request->password
-        );
-    
-        if (count($user) > 0) {
-            session()->put('user', $user[0]);
-            return redirect()->route('pos.index');
-        }
-    
-        return redirect()->route('pos.loginPage')
-            ->with('error', 'Kullanıcı adı veya şifre hatalı!');
+public function login(Request $request)
+{
+    $user = $this->business->login(
+        $request->username,
+        $request->password
+    );
+
+    if(!$user){
+        return back()->with('error', 'Invalid credentials');
     }
-    
+
+    session([
+        'user' => $user
+    ]);
+
+    return redirect()->route('pos.index');
+}
     public function logout()
     {
         session()->forget('user');
@@ -208,6 +226,14 @@ public function deleteStaff($id)
     return redirect()
         ->route('pos.manageStaff')
         ->with('success', 'Personel silindi!');
+}
+public function toggleStaff($id)
+{
+    $this->business->toggleStaff($id);
+
+    return redirect()
+        ->route('pos.manageStaff')
+        ->with('success', 'Staff status updated!');
 }
 public function manageProducts()
 {

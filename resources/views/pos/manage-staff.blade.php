@@ -83,6 +83,24 @@ body{
     left:20px;
     right:20px;
 }
+.toggle-btn{
+    border:none;
+    border-radius:12px;
+    padding:10px 14px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:14px;
+    width:100%;
+}
+
+.activate{
+    background:#16a34a;
+}
+
+.deactivate{
+    background:#dc2626;
+}
 
 .clear{
     background:#f3e9df;
@@ -442,15 +460,21 @@ $activeStaff = collect($staff)->where('AktifMi', 'E')->count();
                             <i class='bx bx-edit'></i>
                         </button>
 
-                        <form method="POST"
-                              action="{{ route('pos.deleteStaff', $person->PersonelID) }}">
-                            @csrf
+                        <form method="POST" action="{{ route('pos.toggleStaff', $person->PersonelID) }}">
+    @csrf
 
-                            <button class="icon-btn delete"
-                                    type="submit">
-                                <i class='bx bx-trash'></i>
-                            </button>
-                        </form>
+    @if($isActive)
+        <button class="toggle-btn deactivate" type="submit">
+            <i class='bx bx-user-x'></i>
+            Deactivate
+        </button>
+    @else
+        <button class="toggle-btn activate" type="submit">
+            <i class='bx bx-user-check'></i>
+            Activate
+        </button>
+    @endif
+</form>
 
                     </div>
 
