@@ -1,10 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <meta charset="UTF-8">
 <title>Warung POS</title>
 
 <style>
+    .logo i{
+    margin-right:8px;
+}
+
+.nav a i{
+    font-size:20px;
+    margin-right:10px;
+    vertical-align:middle;
+}
+
+.clear i{
+    margin-right:8px;
+}
     .receipt-modal{
     position:fixed;
     inset:0;
@@ -46,9 +60,27 @@ body{background:#f8f5f2;color:#2b1b16}
 .price{color:#d69b00;font-size:18px;font-weight:900}
 .badge{background:#dcfce7;color:#15803d;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:bold}
 .order{background:white;border-left:1px solid #eee;padding:25px;overflow:auto}
-.types{display:flex;gap:8px;margin:18px 0}
-.types button{border:0;padding:11px 16px;border-radius:14px;background:#f3e9df;font-weight:bold}
-.types .active{background:#9f1239;color:white}
+.types{
+    display:flex;
+    gap:10px;
+    margin:18px 0;
+}
+
+.type-btn{
+    flex:1;
+    padding:12px;
+    border-radius:14px;
+    border:0;
+    background:#f3e9df;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.type-btn.active{
+    background:#9f1239;
+    color:white;
+}
 input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;margin:8px 0 18px}
 .item{background:#f3e9df;padding:15px;border-radius:16px;margin-bottom:12px}
 .item-top{display:flex;justify-content:space-between;margin-bottom:12px}
@@ -73,20 +105,36 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
 <div class="app">
 
 <aside class="sidebar">
-    <div class="logo">🍴 Warung POS</div>
-    <div class="sub">Premium Restaurant System</div>
+<div class="logo">
+    <i class='bx bxs-store'></i> Warung POS
+</div>
 
-    <div class="nav">
-        <a class="active" href="{{ route('pos.index') }}">🛒 POS Order</a>
-        <a href="{{ route('pos.manageProducts') }}">🍔 Products</a>
-        <a href="{{ route('pos.manageStaff') }}">👨‍🍳 Staff</a>
-        <a href="{{ route('pos.reports') }}">📊 Analytics</a>
-    </div>
+<div class="sub">Premium Restaurant System</div>
 
-    <form class="logout" method="POST" action="{{ route('pos.logout') }}">
-        @csrf
-        <button class="btn clear">Logout</button>
-    </form>
+<div class="nav">
+    <a href="{{ route('pos.index') }}">
+        <i class='bx bx-cart'></i> POS Order
+    </a>
+
+    <a href="{{ route('pos.manageProducts') }}">
+        <i class='bx bx-food-menu'></i> Products
+    </a>
+
+    <a class="active" href="{{ route('pos.manageStaff') }}">
+        <i class='bx bx-group'></i> Staff
+    </a>
+
+    <a href="{{ route('pos.reports') }}">
+        <i class='bx bx-bar-chart-alt-2'></i> Analytics
+    </a>
+</div>
+
+<form class="logout" method="POST" action="{{ route('pos.logout') }}">
+    @csrf
+    <button class="clear">
+        <i class='bx bx-log-out'></i> Logout
+    </button>
+</form>
 </aside>
 
 <main class="main">
@@ -153,10 +201,20 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
     <h2>Current Order</h2>
 
     <div class="types">
-        <button class="active" type="button">Dine-In</button>
-        <button type="button">Takeaway</button>
-        <button type="button">Delivery</button>
-    </div>
+
+    <button type="button"
+            class="type-btn active"
+            onclick="setSaleType('Salon', this)">
+       Salon
+    </button>
+
+    <button type="button"
+            class="type-btn"
+            onclick="setSaleType('Paket', this)">
+        Paket
+    </button>
+
+</div>
 
     @php
         $cart = session('cart', []);
@@ -205,16 +263,37 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
     </div>
 
     <form method="POST" action="{{ route('pos.createOrder') }}">
-        @csrf
-        <input type="hidden" name="sale_type" value="Salon">
-        <input type="hidden" name="payment_method" value="Nakit">
-        <input type="hidden" name="discount" value="0">
+    @csrf
 
-        <label>Table Number</label>
-        <input type="number" name="table_no" value="1">
+    <input type="hidden"
+           name="sale_type"
+           id="saleType"
+           value="Salon">
 
-        <button class="btn pay" type="submit">💳 Proceed to Payment</button>
-    </form>
+    <input type="hidden"
+           name="payment_method"
+           value="Nakit">
+
+    <input type="hidden"
+           name="discount"
+           value="0">
+
+           <div id="tableArea">
+
+<label>Table Number</label>
+
+<input type="number"
+       name="table_no"
+       id="tableInput"
+       value="1">
+
+</div>
+
+    <button class="btn pay" type="submit">
+        <i class='bx bx-credit-card'></i>
+        Proceed to Payment
+    </button>
+</form>
 
     <form method="POST" action="{{ route('pos.clear') }}">
         @csrf
@@ -270,5 +349,34 @@ document.getElementById('searchInput').addEventListener('input', function(){
     </div>
 </div>
 @endif
+<script>
+<script>
+function setSaleType(type, btn){
+
+    document.getElementById('saleType').value = type;
+
+    document.querySelectorAll('.type-btn').forEach(b=>{
+        b.classList.remove('active');
+    });
+
+    btn.classList.add('active');
+
+    const tableArea = document.getElementById('tableArea');
+    const tableInput = document.getElementById('tableInput');
+
+    if(type === 'Paket'){
+        tableArea.style.display = 'none';
+        tableInput.value = 0;
+    }else{
+        tableArea.style.display = 'block';
+        tableInput.value = 1;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setSaleType('Salon', document.querySelector('.type-btn.active'));
+});
+</script>
+</script>
 </body>
 </html>

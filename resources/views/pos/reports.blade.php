@@ -5,6 +5,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+    .logo i{
+    margin-right:8px;
+}
+
+.nav a i{
+    font-size:20px;
+    margin-right:10px;
+    vertical-align:middle;
+}
+
+.clear i{
+    margin-right:8px;
+}
     @media print{
     .sidebar,
     button{
@@ -121,21 +134,36 @@ h1{
 <div class="app">
 
 <aside class="sidebar">
-    <div class="logo">🍴 Warung POS</div>
-    <div class="sub">Premium Restaurant System</div>
-    
+<div class="logo">
+    <i class='bx bxs-store'></i> Warung POS
+</div>
 
-    <div class="nav">
-        <a href="{{ route('pos.index') }}">🛒 POS Order</a>
-        <a href="{{ route('pos.manageProducts') }}">🍔 Products</a>
-        <a href="{{ route('pos.manageStaff') }}">👨‍🍳 Staff</a>
-        <a class="active" href="{{ route('pos.reports') }}">📊 Analytics</a>
-    </div>
+<div class="sub">Premium Restaurant System</div>
 
-    <form class="logout" method="POST" action="{{ route('pos.logout') }}">
-        @csrf
-        <button class="clear">Logout</button>
-    </form>
+<div class="nav">
+    <a href="{{ route('pos.index') }}">
+        <i class='bx bx-cart'></i> POS Order
+    </a>
+
+    <a href="{{ route('pos.manageProducts') }}">
+        <i class='bx bx-food-menu'></i> Products
+    </a>
+
+    <a class="active" href="{{ route('pos.manageStaff') }}">
+        <i class='bx bx-group'></i> Staff
+    </a>
+
+    <a href="{{ route('pos.reports') }}">
+        <i class='bx bx-bar-chart-alt-2'></i> Analytics
+    </a>
+</div>
+
+<form class="logout" method="POST" action="{{ route('pos.logout') }}">
+    @csrf
+    <button class="clear">
+        <i class='bx bx-log-out'></i> Logout
+    </button>
+</form>
 </aside>
 
 <main class="main">
