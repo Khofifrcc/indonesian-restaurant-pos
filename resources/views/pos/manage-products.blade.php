@@ -45,7 +45,26 @@ td{padding:14px;border-bottom:1px solid #eee}
     </div>
 
     <div class="sub">Premium Restaurant System</div>
+    @php
+    $user = session('user');
+@endphp
 
+<div style="
+    background:#f3e9df;
+    padding:14px;
+    border-radius:16px;
+    margin-bottom:22px;
+">
+    <div style="font-weight:800;">
+        <i class="bx bx-user"></i>
+        {{ is_array($user) ? $user['Ad'] : $user->Ad }}
+        {{ is_array($user) ? $user['Soyad'] : $user->Soyad }}
+    </div>
+
+    <div style="color:#666;font-size:14px;margin-top:6px;">
+        {{ is_array($user) ? $user['Gorev'] : $user->Gorev }}
+    </div>
+</div>
     <div class="nav">
     <a href="{{ route('pos.tables') }}">
     <i class="bx bx-table"></i> Tables

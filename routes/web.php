@@ -8,7 +8,7 @@ Route::post('/login', [PosController::class, 'login'])->name('pos.login');
 
 Route::get('/', [PosController::class, 'index'])->name('pos.index');
 Route::post('/order/add-item', [PosController::class, 'addItem'])->name('pos.addItem');
-Route::post('/order/clear', [PosController::class, 'clearOrder'])->name('pos.clear');
+Route::post('/order/clear', [PosController::class, 'clearCart'])->name('pos.clear');
 Route::post('/order/create', [PosController::class, 'createOrder'])->name('pos.createOrder');
 Route::post('/payment', [PosController::class, 'pay'])->name('pos.pay');
 
@@ -29,3 +29,5 @@ Route::get('/tables', [PosController::class, 'tables'])->name('pos.tables');
 Route::get('/table/{number}', [PosController::class, 'selectTable'])->name('pos.selectTable');
 Route::post('/staff/toggle/{id}', [PosController::class, 'toggleStaff'])
     ->name('pos.toggleStaff');
+    Route::get('/staff/edit/{id}', [PosController::class, 'editStaff'])->name('pos.editStaff');
+    Route::post('/staff/update/{id}', [PosController::class, 'updateStaff'])->name('pos.updateStaff');

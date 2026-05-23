@@ -90,4 +90,13 @@ public function login($username, $password)
 {
     return $this->dal->login($username, $password);
 }
+public function getStaffById($id)
+{
+    return $this->dal->getStaffById($id);
+}
+
+public function updateStaff($id, $ad, $soyad, $telefon, $gorev, $aktifMi, $username, $password)
+{
+    return $this->dal->updateStaff($id, $ad, $soyad, $telefon, $gorev, $aktifMi, $username, $password);
+}
 }

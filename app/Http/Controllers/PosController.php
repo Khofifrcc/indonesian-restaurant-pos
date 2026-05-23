@@ -114,49 +114,46 @@ class PosController extends Controller
     }
 
     public function createOrder(Request $request)
-    {
-        $cart = session()->get('cart', []);
+{
+    $cart = session()->get('cart', []);
 
-        if (count($cart) == 0) {
-
-            return redirect()
-                ->route('pos.index')
-                ->with('error', 'Cart is empty!');
-        }
-
-        $subtotal = 0;
-
-        foreach ($cart as $item) {
-            $subtotal += $item['SatirToplam'];
-        }
-
-        $discountPercent = $request->discount ?? 0;
-
-        $discountAmount =
-            $subtotal * ($discountPercent / 100);
-
-        $user = session('user');
-
-        $personelID = is_array($user)
-            ? ($user['PersonelID'] ?? 2)
-            : ($user->PersonelID ?? 2);
-
-        $saleID = $this->business->createOrder(
-            $cart,
-            $request->payment_method ?? 'Nakit',
-            $request->sale_type ?? 'Salon',
-            $request->table_no ?? null,
-            $discountAmount,
-            $personelID
-        );
-
-        session()->forget('cart');
-        session()->forget('selected_table');
-
-        session()->flash('receipt_id', $saleID);
-
-        return redirect()->route('pos.index');
+    if (count($cart) == 0) {
+        return redirect()
+            ->route('pos.index')
+            ->with('error', 'Cart is empty!');
     }
+
+    $subtotal = 0;
+
+    foreach ($cart as $item) {
+        $subtotal += $item['SatirToplam'];
+    }
+
+    $discountPercent = $request->discount ?? 0;
+    $discountAmount = $subtotal * ($discountPercent / 100);
+
+    $user = session('user');
+
+    $personelID = is_array($user)
+        ? ($user['PersonelID'] ?? 2)
+        : ($user->PersonelID ?? 2);
+
+    $saleID = $this->business->createOrder(
+        $cart,
+        $request->payment_method ?? 'Nakit',
+        'Salon',
+        $request->table_no ?? null,
+        $discountAmount,
+        $personelID
+    );
+
+    session()->forget('cart');
+    session()->forget('selected_table');
+
+    session()->flash('receipt_id', $saleID);
+
+    return redirect()->route('pos.index');
+}
 
     public function receipt($id)
 {
@@ -251,5 +248,29 @@ class PosController extends Controller
         ]);
 
         return redirect()->route('pos.index');
+    }
+    public function editStaff($id)
+    {
+        $person = $this->business->getStaffById($id);
+    
+        return view('pos.edit-staff', compact('person'));
+    }
+    
+    public function updateStaff(Request $request, $id)
+    {
+        $this->business->updateStaff(
+            $id,
+            $request->ad,
+            $request->soyad,
+            $request->telefon,
+            $request->gorev,
+            $request->aktif_mi,
+            $request->kullanici_adi,
+            $request->sifre
+        );
+    
+        return redirect()
+            ->route('pos.manageStaff')
+            ->with('success', 'Staff updated!');
     }
 }

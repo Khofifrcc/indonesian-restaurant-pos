@@ -101,4 +101,18 @@ public function getSaleReceipt($id)
         [$id]
     );
 }
+public function getStaffById($id)
+{
+    return DB::select('SELECT * FROM PERSONEL WHERE PersonelID = ?', [$id])[0];
+}
+
+public function updateStaff($id, $ad, $soyad, $telefon, $gorev, $aktifMi, $username, $password)
+{
+    return DB::statement(
+        'UPDATE PERSONEL 
+         SET Ad=?, Soyad=?, Telefon=?, Gorev=?, AktifMi=?, KullaniciAdi=?, Sifre=?
+         WHERE PersonelID=?',
+        [$ad, $soyad, $telefon, $gorev, $aktifMi, $username, $password, $id]
+    );
+}
 }

@@ -315,6 +315,26 @@ $activeStaff = collect($staff)->where('AktifMi', 'E')->count();
     <div class="sub">
         Premium Restaurant System
     </div>
+    @php
+    $user = session('user');
+@endphp
+
+<div style="
+    background:#f3e9df;
+    padding:14px;
+    border-radius:16px;
+    margin-bottom:22px;
+">
+    <div style="font-weight:800;">
+        <i class="bx bx-user"></i>
+        {{ is_array($user) ? $user['Ad'] : $user->Ad }}
+        {{ is_array($user) ? $user['Soyad'] : $user->Soyad }}
+    </div>
+
+    <div style="color:#666;font-size:14px;margin-top:6px;">
+        {{ is_array($user) ? $user['Gorev'] : $user->Gorev }}
+    </div>
+</div>
 
     <div class="nav">
     <a href="{{ route('pos.tables') }}">
@@ -456,9 +476,21 @@ $activeStaff = collect($staff)->where('AktifMi', 'E')->count();
 
                     <div class="actions">
 
-                        <button class="icon-btn edit">
-                            <i class='bx bx-edit'></i>
-                        </button>
+                    <button
+    class="icon-btn edit"
+    onclick="openEditModal(
+        '{{ $person->PersonelID }}',
+        '{{ $person->Ad }}',
+        '{{ $person->Soyad }}',
+        '{{ $person->Telefon }}',
+        '{{ $person->Gorev }}',
+        '{{ $person->AktifMi }}',
+        '{{ $person->KullaniciAdi }}',
+        '{{ $person->Sifre }}'
+    )">
+
+    <i class='bx bx-edit'></i>
+</button>
 
                         <form method="POST" action="{{ route('pos.toggleStaff', $person->PersonelID) }}">
     @csrf
@@ -533,6 +565,119 @@ document.getElementById('staffSearch').addEventListener('input', function(){
 
 });
 </script>
+<div id="editModal" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+justify-content:center;
+align-items:center;
+z-index:999;
+">
 
+<div style="
+background:white;
+padding:28px;
+border-radius:24px;
+width:420px;
+max-height:90vh;
+overflow:auto;
+">
+
+<h2 style="margin-bottom:20px;">Edit Staff</h2>
+
+<form id="editForm" method="POST">
+    @csrf
+
+    <input type="text"
+           name="ad"
+           id="editAd"
+           placeholder="Ad"
+           required>
+
+    <input type="text"
+           name="soyad"
+           id="editSoyad"
+           placeholder="Soyad"
+           required>
+
+    <input type="text"
+           name="telefon"
+           id="editTelefon"
+           placeholder="Telefon">
+
+    <select name="gorev" id="editGorev">
+        <option value="Kasiyer">Kasiyer</option>
+        <option value="Yönetici">Yönetici</option>
+    </select>
+
+    <select name="aktif_mi" id="editAktif">
+        <option value="E">Aktif</option>
+        <option value="H">Pasif</option>
+    </select>
+
+    <input type="text"
+           name="kullanici_adi"
+           id="editUsername"
+           placeholder="Username">
+
+    <input type="text"
+           name="sifre"
+           id="editPassword"
+           placeholder="Password">
+
+    <div style="display:flex;gap:12px;margin-top:18px;">
+
+        <button type="submit"
+                class="submit"
+                style="flex:1;">
+            Update
+        </button>
+
+        <button type="button"
+                onclick="closeEditModal()"
+                class="clear"
+                style="flex:1;">
+            Cancel
+        </button>
+
+    </div>
+
+</form>
+
+</div>
+</div>
+<script>
+
+function openEditModal(
+    id,
+    ad,
+    soyad,
+    telefon,
+    gorev,
+    aktif,
+    username,
+    password
+){
+
+    document.getElementById('editModal').style.display = 'flex';
+
+    document.getElementById('editAd').value = ad;
+    document.getElementById('editSoyad').value = soyad;
+    document.getElementById('editTelefon').value = telefon;
+    document.getElementById('editGorev').value = gorev;
+    document.getElementById('editAktif').value = aktif;
+    document.getElementById('editUsername').value = username;
+    document.getElementById('editPassword').value = password;
+
+    document.getElementById('editForm').action =
+        '/staff/update/' + id;
+}
+
+function closeEditModal(){
+    document.getElementById('editModal').style.display = 'none';
+}
+
+</script>
 </body>
 </html>
