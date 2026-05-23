@@ -99,12 +99,13 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
     @endif
 
     <div class="nav">
-        <a class="active" href="{{ route('pos.index') }}">
-            <i class="bx bx-cart"></i> POS Order
-        </a>
+        
 
         <a href="{{ route('pos.tables') }}">
             <i class="bx bx-table"></i> Tables
+        </a>
+        <a class="active" href="{{ route('pos.index') }}">
+            <i class="bx bx-cart"></i> POS Order
         </a>
 
         <a href="{{ route('pos.manageProducts') }}">
@@ -257,34 +258,49 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
     </div>
 
     <form id="paymentForm" method="POST" action="{{ route('pos.createOrder') }}">
-        @csrf
+    @csrf
 
+    <label>Order Type</label>
+
+    <select name="sale_type" id="saleType" onchange="toggleTableInput()">
+        <option value="Salon">Salon</option>
+        <option value="Paket">Paket</option>
+    </select>
+
+    <div id="tableArea">
         <label>Table Number</label>
+
         <input type="number"
                name="table_no"
-               value="{{ session('selected_table', 1) }}"
-               required>
+               id="tableInput"
+               value="{{ session('selected_table', 1) }}">
+    </div>
 
-        <label>Payment Method</label>
-        <select name="payment_method" required>
-            <option value="Nakit">Nakit</option>
-            <option value="Kart">Kart</option>
-        </select>
+    <label>Payment Method</label>
 
-        <label>Discount (%)</label>
-        <input type="number"
-               name="discount"
-               id="discountInput"
-               value="0"
-               min="0"
-               max="100">
+    <select name="payment_method" required>
+        <option value="Nakit">Nakit</option>
+        <option value="Kart">Kart</option>
+    </select>
 
-        <button class="btn pay" type="button" onclick="openPaymentModal()">
-            <i class="bx bx-credit-card"></i>
-            Proceed to Payment
-        </button>
-    </form>
+    <label>Discount (%)</label>
 
+    <input type="number"
+           name="discount"
+           id="discountInput"
+           value="0"
+           min="0"
+           max="100">
+
+    <button class="btn pay"
+            type="button"
+            onclick="openPaymentModal()">
+
+        <i class="bx bx-credit-card"></i>
+        Proceed to Payment
+
+    </button>
+</form>
     <form method="POST" action="{{ route('pos.clear') }}">
         @csrf
         <button class="btn clear" type="submit">Clear Order</button>
@@ -385,6 +401,33 @@ function openPaymentModal(){
 function closePaymentModal(){
     document.getElementById('paymentModal').style.display = 'none';
 }
+function toggleTableInput(){
+
+const type =
+    document.getElementById('saleType').value;
+
+const tableArea =
+    document.getElementById('tableArea');
+
+const tableInput =
+    document.getElementById('tableInput');
+
+if(type === 'Paket'){
+
+    tableArea.style.display = 'none';
+    tableInput.value = '';
+
+}else{
+
+    tableArea.style.display = 'block';
+
+    if(!tableInput.value){
+        tableInput.value = 1;
+    }
+}
+}
+
+toggleTableInput();
 </script>
 
 </body>

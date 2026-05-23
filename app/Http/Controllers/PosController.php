@@ -141,7 +141,7 @@ class PosController extends Controller
     $saleID = $this->business->createOrder(
         $cart,
         $request->payment_method ?? 'Nakit',
-        'Salon',
+        $request->sale_type ?? 'Salon',
         $request->table_no ?? null,
         $discountAmount,
         $personelID

@@ -71,15 +71,16 @@ body{background:#f8f5f2;color:#2b1b16}
 </div>
 
     <div class="nav">
-        <a href="{{ route('pos.index') }}">
+        
         <a class="active" href="{{ route('pos.tables') }}">
             <i class="bx bx-table"></i> Tables
         </a>
-        <a>
-            <i class="bx bx-cart"></i> POS Order
-        </a>
+        
+        <a href="{{ route('pos.index') }}">
 
-       
+<i class="bx bx-cart"></i> POS Order
+</a>
+
 
         <a href="{{ route('pos.manageProducts') }}">
             <i class="bx bx-food-menu"></i> Products
