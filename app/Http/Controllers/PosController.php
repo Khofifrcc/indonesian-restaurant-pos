@@ -91,7 +91,19 @@ class PosController extends Controller
     {
         return view('pos.login');
     }
-    
+    public function tables()
+{
+    $sales = $this->business->getSales();
+
+    return view('pos.tables', compact('sales'));
+}
+
+public function selectTable($number)
+{
+    session()->put('selected_table', $number);
+
+    return redirect()->route('pos.index');
+}
     public function login(Request $request)
     {
         $user = $this->business->login(
