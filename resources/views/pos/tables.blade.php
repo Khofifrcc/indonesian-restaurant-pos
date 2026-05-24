@@ -51,22 +51,28 @@ body{background:#f8f5f2;color:#2b1b16}
     <div class="sub">Premium Restaurant System</div>
     @php
     $user = session('user');
+    $userName = 'Guest User';
+    $userRole = 'Restaurant Staff';
+
+    if ($user) {
+        $userName = is_array($user)
+            ? (($user['Ad'] ?? '') . ' ' . ($user['Soyad'] ?? ''))
+            : (($user->Ad ?? '') . ' ' . ($user->Soyad ?? ''));
+
+        $userRole = is_array($user)
+            ? ($user['Gorev'] ?? 'Restaurant Staff')
+            : ($user->Gorev ?? 'Restaurant Staff');
+    }
 @endphp
 
-<div style="
-    background:#f3e9df;
-    padding:14px;
-    border-radius:16px;
-    margin-bottom:22px;
-">
+<div style="background:#f3e9df;padding:14px;border-radius:16px;margin-bottom:22px;">
     <div style="font-weight:800;">
         <i class="bx bx-user"></i>
-        {{ is_array($user) ? $user['Ad'] : $user->Ad }}
-        {{ is_array($user) ? $user['Soyad'] : $user->Soyad }}
+        {{ trim($userName) ?: 'Guest User' }}
     </div>
 
     <div style="color:#666;font-size:14px;margin-top:6px;">
-        {{ is_array($user) ? $user['Gorev'] : $user->Gorev }}
+        {{ $userRole }}
     </div>
 </div>
 
