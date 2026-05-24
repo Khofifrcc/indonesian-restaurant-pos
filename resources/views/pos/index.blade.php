@@ -66,6 +66,35 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
     .sidebar,.order{position:static}
     .grid{grid-template-columns:repeat(2,1fr)}
 }
+.type-btn{
+    flex:1;
+    background:white;
+    border:1px solid #eee;
+    border-radius:18px;
+    padding:18px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    transition:.2s;
+    font-weight:800;
+}
+
+.type-btn i{
+    font-size:28px;
+    color:#9f1239;
+}
+
+.type-btn.active{
+    background:#9f1239;
+    color:white;
+    box-shadow:0 10px 20px rgba(159,18,57,.25);
+}
+
+.type-btn.active i{
+    color:white;
+}
 </style>
 </head>
 
@@ -158,14 +187,15 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
                 $image='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500';
                 $name=strtolower($product->UrunAdi);
 
-                if(str_contains($name,'nasi')) $image='https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=500';
-                if(str_contains($name,'mie')) $image='https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500';
-                if(str_contains($name,'satay') || str_contains($name,'sate')) $image='https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=500';
-                if(str_contains($name,'soto')) $image='https://images.unsplash.com/photo-1547592166-23ac45744acd?w=500';
-                if(str_contains($name,'pisang')) $image='https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500';
-                if(str_contains($name,'teh')) $image='https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500';
-                if(str_contains($name,'kopi')) $image='https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500';
-                if(str_contains($name,'bakso')) $image='https://images.unsplash.com/photo-1547592166-23ac45744acd?w=500';
+                if(str_contains($name,'nasi')) $image='https://i.pinimg.com/1200x/d3/7b/f1/d37bf17c96e03b533f0f4b1c9b130011.jpg';
+                if(str_contains($name,'mie')) $image='https://i.pinimg.com/736x/46/6d/d3/466dd3d62f2d7a1b6266ba6fa63f97ac.jpg';
+                if(str_contains($name,'satay') || str_contains($name,'sate')) $image='https://i.pinimg.com/1200x/6f/7f/8e/6f7f8ee05147aae0a422aae3bd8cc1d3.jpg';
+                if(str_contains($name,'soto')) $image='https://i.pinimg.com/736x/d9/14/ee/d914eedf08d2a7c9e1463b155fd471b0.jpg';
+                if(str_contains($name,'pisang')) $image='https://i.pinimg.com/1200x/8c/70/52/8c705214211a3f84a6abc76e0daa4a7d.jpg';
+                if(str_contains($name,'teh')) $image='https://i.pinimg.com/736x/1b/9a/23/1b9a2382bc0fb55a1f8cea2c28e1be12.jpg';
+                if(str_contains($name,'kwetiau')) $image='https://i.pinimg.com/1200x/61/e0/b1/61e0b18c6f9a45f837861e56facaa236.jpg';
+                if(str_contains($name,'bakso')) $image='https://i.pinimg.com/1200x/46/4c/83/464c833bb65da1a7b9611fe14799a69c.jpg';
+                if(str_contains($name,'nasi padang')) $image='https://i.pinimg.com/736x/a1/06/8d/a1068df230801031fd0b9df8b4c92e6c.jpg';
             @endphp
 
             <form class="product-form"
@@ -262,10 +292,34 @@ input,select{width:100%;padding:14px;border-radius:14px;border:1px solid #eee;ma
 
     <label>Order Type</label>
 
-    <select name="sale_type" id="saleType" onchange="toggleTableInput()">
-        <option value="Salon">Salon</option>
-        <option value="Paket">Paket</option>
-    </select>
+<input type="hidden"
+       name="sale_type"
+       id="saleTypeInput"
+       value="Salon">
+
+<div class="type-wrapper" style="display:flex;gap:12px;margin:15px 0 20px;">
+    
+    <button type="button"
+            class="type-btn active"
+            data-value="Salon"
+            onclick="selectType(this)">
+
+        <i class='bx bx-store'></i>
+        <span>Salon</span>
+
+    </button>
+
+    <button type="button"
+            class="type-btn"
+            data-value="Paket"
+            onclick="selectType(this)">
+
+        <i class='bx bx-package'></i>
+        <span>Paket</span>
+
+    </button>
+
+</div>
 
     <div id="tableArea">
         <label>Table Number</label>
@@ -401,33 +455,45 @@ function openPaymentModal(){
 function closePaymentModal(){
     document.getElementById('paymentModal').style.display = 'none';
 }
-function toggleTableInput(){
 
-const type =
-    document.getElementById('saleType').value;
 
-const tableArea =
-    document.getElementById('tableArea');
+function selectType(el){
+    document.querySelectorAll('.type-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
 
-const tableInput =
-    document.getElementById('tableInput');
+    el.classList.add('active');
 
-if(type === 'Paket'){
+    const value = el.getAttribute('data-value');
 
-    tableArea.style.display = 'none';
-    tableInput.value = '';
+    sessionStorage.setItem('sale_type', value);
 
-}else{
+    const saleTypeInput = document.getElementById('saleTypeInput');
+    saleTypeInput.value = value;
 
-    tableArea.style.display = 'block';
+    const tableArea = document.getElementById('tableArea');
+    const tableInput = document.getElementById('tableInput');
 
-    if(!tableInput.value){
-        tableInput.value = 1;
+    if(value === 'Paket'){
+        tableArea.style.display = 'none';
+        tableInput.value = '';
+    }else{
+        tableArea.style.display = 'block';
+
+        if(!tableInput.value){
+            tableInput.value = 1;
+        }
     }
 }
-}
 
-toggleTableInput();
+document.addEventListener('DOMContentLoaded', function(){
+    const savedType = sessionStorage.getItem('sale_type') || 'Salon';
+    const target = document.querySelector('.type-btn[data-value="' + savedType + '"]');
+
+    if(target){
+        selectType(target);
+    }
+});
 </script>
 
 </body>

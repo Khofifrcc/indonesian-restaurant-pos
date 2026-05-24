@@ -31,3 +31,5 @@ Route::post('/staff/toggle/{id}', [PosController::class, 'toggleStaff'])
     ->name('pos.toggleStaff');
     Route::get('/staff/edit/{id}', [PosController::class, 'editStaff'])->name('pos.editStaff');
     Route::post('/staff/update/{id}', [PosController::class, 'updateStaff'])->name('pos.updateStaff');
+    Route::post('/cart/increase/{id}', [PosController::class, 'increaseItem'])->name('cart.increase');
+    Route::post('/cart/decrease/{id}', [PosController::class, 'decreaseItem'])->name('cart.decrease');

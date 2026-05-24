@@ -273,4 +273,55 @@ class PosController extends Controller
             ->route('pos.manageStaff')
             ->with('success', 'Staff updated!');
     }
+    
+    public function increaseItem($index)
+    {
+        $cart = session()->get('cart', []);
+    
+        if (isset($cart[$index])) {
+            $cart[$index]['Adet'] += 1;
+            $cart[$index]['SatirToplam'] =
+                $cart[$index]['Adet'] * $cart[$index]['BirimFiyat'];
+        }
+    
+        session()->put('cart', $cart);
+    
+        return redirect()->route('pos.index');
+    }
+    
+    public function decreaseItem($index)
+    {
+        $cart = session()->get('cart', []);
+    
+        if (isset($cart[$index])) {
+            $cart[$index]['Adet'] -= 1;
+    
+            if ($cart[$index]['Adet'] <= 0) {
+                unset($cart[$index]);
+                $cart = array_values($cart);
+            } else {
+                $cart[$index]['SatirToplam'] =
+                    $cart[$index]['Adet'] * $cart[$index]['BirimFiyat'];
+            }
+        }
+    
+        session()->put('cart', $cart);
+    
+        return redirect()->route('pos.index');
+    }
+    
+    public function removeItem($index)
+    {
+        $cart = session()->get('cart', []);
+    
+        if (isset($cart[$index])) {
+            unset($cart[$index]);
+            $cart = array_values($cart);
+        }
+    
+        session()->put('cart', $cart);
+    
+        return redirect()->route('pos.index');
+    }
+
 }
