@@ -86,14 +86,7 @@ public function deleteStaff($personelID)
         [$personelID]
     );
 }
-public function login($username, $password)
-{
-    return DB::table('PERSONEL')
-        ->where('KullaniciAdi', $username)
-        ->where('Sifre', $password)
-        ->where('AktifMi', 'E')
-        ->first();
-}
+
 public function getSaleReceipt($id)
 {
     return DB::select(
